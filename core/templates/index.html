@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSense - Decision Support for Rice Farmers</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>AgroSense</h1>
+        <p>"Minimizing Crop Loss, Water Wastage, while Maximizing Crop Growth and Profit"</p>
+    </header>
+
+    <section id="user-inputs">
+        <h2>User Inputs</h2>
+        <form id="agrosense-form">
+            <label for="crop-type">Crop Type:</label>
+            <select id="crop-type" name="crop-type">
+                <option value="palay" selected>Palay</option>
+            </select>
+
+            <label for="location">Location (Barangay / Municipality):</label>
+            <input type="text" id="location" name="location" placeholder="Enter your location">
+
+            <label for="field-status">Current Field Status:</label>
+            <select id="field-status" name="field-status">
+                <option value="saturated">Saturated</option>
+                <option value="dry">Dry</option>
+                <option value="water-high">Water is still high</option>
+            </select>
+
+            <label for="growth-stage">Estimated Growth Stage:</label>
+            <select id="growth-stage" name="growth-stage">
+                <option value="newly-planted">Newly Planted</option>
+                <option value="vegetative">Vegetative</option>
+                <option value="flowering">Flowering</option>
+                <option value="near-harvest">Near Harvest</option>
+            </select>
+
+            <label for="date-planted">Date Planted:</label>
+            <input type="date" id="date-planted" name="date-planted">
+
+            <button type="submit">Get Recommendations</button>
+        </form>
+    </section>
+
+    <section id="outputs">
+        <h2>AgroSense Outputs</h2>
+
+        <div id="weather-window">
+            <h3>3–5 Day Actionable Weather Window</h3>
+            <ul>
+                <li>Rainfall Probability: <span id="rainfall-prob">--</span></li>
+                <li>Expected Intensity: <span id="rain-intensity">--</span></li>
+                <li>Confidence Level: <span id="confidence-level">--</span></li>
+            </ul>
+        </div>
+
+        <div id="irrigation-decision">
+            <h3>Irrigation Decision</h3>
+            <p>Status: <span id="irrigation-status">--</span></p>
+            <p>Risk Score: <span id="risk-score">--</span></p>
+            <div id="risk-bars">
+                <p>Flood/Waterlogging: <span id="flood-risk">--</span></p>
+                <p>Water Stress: <span id="water-stress-risk">--</span></p>
+                <p>Operational Uncertainty: <span id="operational-risk">--</span></p>
+            </div>
+        </div>
+
+        <div id="ai-recommendation">
+            <h3>Explainable AI Recommendation</h3>
+            <p id="ai-text">--</p>
+        </div>
+
+        <div id="early-warning">
+            <h3>Early-Warning Alerts</h3>
+            <ul>
+                <li>Flood Stress Risk: <span id="flood-alert">--</span></li>
+                <li>Pest Risk Alert: <span id="pest-alert">--</span></li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 AgroSense. Developed for rice farmers and agricultural technicians.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
