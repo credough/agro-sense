@@ -1,91 +1,836 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgroSense - Decision Support for Rice Farmers</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AgroSense</title>
+<link rel="icon" type="image/png" sizes="32x32" href="images/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>AgroSense</h1>
-        <p>"Minimizing Crop Loss, Water Wastage, while Maximizing Crop Growth and Profit"</p>
-    </header>
 
-    <section id="user-inputs">
-        <h2>User Inputs</h2>
-        <form id="agrosense-form">
-            <label for="crop-type">Crop Type:</label>
-            <select id="crop-type" name="crop-type">
-                <option value="palay" selected>Palay</option>
-            </select>
+<!-- ═══════════════════════════════
+     AUTH SCREEN
+═══════════════════════════════ -->
+<div id="auth-screen">
 
-            <label for="location">Location (Barangay / Municipality):</label>
-            <input type="text" id="location" name="location" placeholder="Enter your location">
+  <!-- LEFT — Login Form -->
+  <div class="auth-left">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <div class="auth-logo-icon">
+        <img src="images/logo.png" alt="My Logo" class="logo-img"></div>
+      </div>
+      <div class="auth-logo-text">Agro<span>Sense</span></div>
+    </div>
 
-            <label for="field-status">Current Field Status:</label>
-            <select id="field-status" name="field-status">
-                <option value="saturated">Saturated</option>
-                <option value="dry">Dry</option>
-                <option value="water-high">Water is still high</option>
-            </select>
+    <div class="auth-headline">Welcome back!</div>
+    <div class="auth-sub">Weather-powered irrigation advisories grounded in IRRI AWD protocol. Sign in to access your field dashboard.</div>
 
-            <label for="growth-stage">Estimated Growth Stage:</label>
-            <select id="growth-stage" name="growth-stage">
-                <option value="newly-planted">Newly Planted</option>
-                <option value="vegetative">Vegetative</option>
-                <option value="flowering">Flowering</option>
-                <option value="near-harvest">Near Harvest</option>
-            </select>
+    <div class="auth-divider">
+      <div class="auth-divider-line"></div>
+      <div class="auth-divider-text">Sign in to continue</div>
+      <div class="auth-divider-line"></div>
+    </div>
 
-            <label for="date-planted">Date Planted:</label>
-            <input type="date" id="date-planted" name="date-planted">
+    <button class="btn-google" onclick="signInWithGoogle()">
+      <svg class="btn-google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
 
-            <button type="submit">Get Recommendations</button>
-        </form>
-    </section>
+    <button class="btn-guest" onclick="signInAsGuest()">
+      Continue as Guest
+    </button>
 
-    <section id="outputs">
-        <h2>AgroSense Outputs</h2>
+    <div class="auth-footer">
+      By continuing, you agree to AgroSense's Terms of Service.<br/>
+      Built on IRRI AWD · PhilRice Guidelines · Open-Meteo API
+    </div>
+  </div>
 
-        <div id="weather-window">
-            <h3>3–5 Day Actionable Weather Window</h3>
-            <ul>
-                <li>Rainfall Probability: <span id="rainfall-prob">--</span></li>
-                <li>Expected Intensity: <span id="rain-intensity">--</span></li>
-                <li>Confidence Level: <span id="confidence-level">--</span></li>
-            </ul>
+  <!-- RIGHT — Rice Field Hero -->
+  <div class="auth-right">
+    <div class="auth-right-img"></div>
+    <div class="auth-right-overlay"></div>
+    <div class="auth-right-content">
+      </div>
+      <div class="auth-right-stats">
+        
         </div>
+        
 
-        <div id="irrigation-decision">
-            <h3>Irrigation Decision</h3>
-            <p>Status: <span id="irrigation-status">--</span></p>
-            <p>Risk Score: <span id="risk-score">--</span></p>
-            <div id="risk-bars">
-                <p>Flood/Waterlogging: <span id="flood-risk">--</span></p>
-                <p>Water Stress: <span id="water-stress-risk">--</span></p>
-                <p>Operational Uncertainty: <span id="operational-risk">--</span></p>
+        </div>
+        
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════
+     MAIN APP
+═══════════════════════════════ -->
+<div id="app">
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a href="#home" class="nav-logo">
+      <div class="nav-logo-icon">
+          <img src="images/logo.png" alt="My Brand Logo" class="nav-logo-img">
+      </div>
+      <div class="nav-logo-text">Agro<span>Sense</span></div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#home" class="active">Home</a></li>
+      <li><a href="#features">About AgroSense</a></li>
+      <li><a href="#advisory">Get Advisory</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+    </ul>
+
+    <div class="nav-user">
+      <div class="nav-user-avatar" id="user-avatar">JD</div>
+      <div class="nav-user-name" id="user-name">Juan Dela Cruz</div>
+      <button class="btn-logout" onclick="logout()" title="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+
+    <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#home" onclick="closeMenu()">Home</a>
+    <a href="#features" onclick="closeMenu()">About</a>
+    <a href="#advisory" onclick="closeMenu()">Get Advisory</a>
+    <a href="#dashboard" onclick="closeMenu()">Dashboard</a>
+    <a href="#" onclick="closeMenu(); logout();" style="color:#f87171;">↩ Logout</a>
+  </div>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        IRRI AWD · PhilRice Backed
+      </div>
+
+      <h1 class="hero-headline">
+        Minimize crop loss.<br/>
+        Maximize every <span class="accent">harvest.</span>
+      </h1>
+
+      <p class="hero-sub">
+        AgroSense turns 3–5 day weather forecasts into clear, growth-stage-specific irrigation advisories for Filipino rice farmers — no sensors, no technical literacy required.
+      </p>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">25–30%</div>
+          <div class="hero-stat-label">Water Savings</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">70%</div>
+          <div class="hero-stat-label">Lower Methane</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">3–5 Day</div>
+          <div class="hero-stat-label">Forecast Window</div>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#advisory" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Get Irrigation Advisory
+        </a>
+        <a href="#dashboard" class="btn-secondary">View Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+   <!-- ═══ FEATURES ═══ -->
+  <section id="features">
+    <div class="section-inner">
+      <div class="section-label">System Capabilities</div>
+      <h2 class="section-title">Built for the Filipino farmers</h2>
+      <p class="section-desc">Every feature in AgroSense traces back to a real field constraint — not a technical preference.</p>
+
+      <div class="features-grid">
+
+        <!-- Weather Integration — satellite/signal icon -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 2a10 10 0 0 1 10 10"/>
+                <path d="M12 6a6 6 0 0 1 6 6"/>
+                <path d="M12 10a2 2 0 0 1 2 2"/>
+                <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                <path d="M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+              </svg>
             </div>
+          </div>
+          <div class="feature-title">Real-Time Weather Integration</div>
+          <div class="feature-desc">Pulls 3–5 day forecasts from Open-Meteo. Confidence level computed from forecast variance — not AI-generated.</div>
         </div>
 
-        <div id="ai-recommendation">
-            <h3>Explainable AI Recommendation</h3>
-            <p id="ai-text">--</p>
+        <!-- IRRI AWD Engine — circuit / decision tree icon -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="6" height="6" rx="1"/>
+                <rect x="15" y="3" width="6" height="6" rx="1"/>
+                <rect x="9" y="15" width="6" height="6" rx="1"/>
+                <path d="M6 9v3h12V9M12 12v3"/>
+              </svg>
+            </div>
+          </div>
+          <div class="feature-title">IRRI AWD Decision Engine</div>
+          <div class="feature-desc">Deterministic, rule-based engine grounded in IRRI's Alternate Wetting and Drying framework. Outputs are fully explainable and auditable — no black box.</div>
         </div>
 
-        <div id="early-warning">
-            <h3>Early-Warning Alerts</h3>
-            <ul>
-                <li>Flood Stress Risk: <span id="flood-alert">--</span></li>
-                <li>Pest Risk Alert: <span id="pest-alert">--</span></li>
-            </ul>
+        <!-- Filipino language — speech bubble with text lines -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                <line x1="8" y1="9" x2="16" y2="9"/>
+                <line x1="8" y1="13" x2="13" y2="13"/>
+              </svg>
+            </div>
+          </div>
+          <div class="feature-title">Plain Filipino Recommendations</div>
+          <div class="feature-desc">RAG-powered LLM generates guidance in plain Tagalog at a Grade 6 literacy level. Constrained to IRRI and PhilRice data — no hallucinations, no generic advice.</div>
         </div>
-    </section>
 
-    <footer>
-        <p>&copy; 2026 AgroSense. Developed for rice farmers and agricultural technicians.</p>
-    </footer>
+        <!-- AI Photo Analysis — camera with AI spark -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l2-3h8l2 3h3a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="3.5"/>
+                <path d="M17.5 6.5l.5.5M19 5l.5.5"/>
+              </svg>
+            </div>
+          </div>
+          <div class="feature-title">AI-Assisted Photo Analysis</div>
+          <div class="feature-desc">Upload a field photo and AgroSense infers water status using the Claude API — no technical terminology needed. The photo replaces complex soil sensor inputs.</div>
+        </div>
 
-    <script src="script.js"></script>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ ADVISORY FORM ═══ -->
+  <section id="advisory">
+    <div class="section-inner">
+      <div class="section-label">Irrigation Advisory</div>
+      <h2 class="section-title">Get Your Field Recommendation</h2>
+      <p class="section-desc">Walk through 2 quick steps to get a science-based irrigation decision grounded in IRRI AWD protocol.</p>
+
+      <!-- ── Step Progress ── -->
+      <div class="stepper-wrapper">
+        <div class="stepper-track">
+          <div class="stepper-item active" id="stepper-1">
+            <div class="stepper-dot" id="sdot-1">1</div>
+            <div class="stepper-label">Field Info</div>
+          </div>
+          <div class="stepper-item" id="stepper-2">
+            <div class="stepper-dot" id="sdot-2">2</div>
+            <div class="stepper-label">Crop Details</div>
+          </div>
+          <div class="stepper-item" id="stepper-3">
+            <div class="stepper-dot" id="sdot-3">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="stepper-label">Advisory</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Steps Slider ── -->
+      <div class="steps-viewport">
+        <div class="steps-track" id="steps-track">
+
+          <!-- ══ STEP 1: Field Info ══ -->
+          <div class="form-step" id="step-1">
+            <div class="step-card">
+              <div class="step-card-header">
+                <div class="step-card-eyebrow">Step 1 of 2</div>
+                <div class="step-card-title">Field Information</div>
+                <div class="step-card-sub">Tell us where your field is and when you planted.</div>
+              </div>
+
+              <div class="form-grid">
+                <!-- Location -->
+                <div class="form-group">
+                  <label class="form-label" for="field-location-select">
+                    Province / Location
+                    <span style="color:#c03030;margin-left:2px">*</span>
+                  </label>
+                  <select class="form-input" id="field-location-select" onchange="handleLocationSelect(this)" style="cursor:pointer;">
+                    <option value="">— Select Province —</option>
+                    <option value="Agusan del Norte">Agusan del Norte</option>
+                    <option value="Bukidnon">Bukidnon</option>
+                    <option value="Bulacan">Bulacan</option>
+                    <option value="Cagayan">Cagayan</option>
+                    <option value="Capiz">Capiz</option>
+                    <option value="Cebu">Cebu</option>
+                    <option value="Davao del Norte">Davao del Norte</option>
+                    <option value="Ifugao">Ifugao</option>
+                    <option value="Ilocos Norte">Ilocos Norte</option>
+                    <option value="Ilocos Sur">Ilocos Sur</option>
+                    <option value="Iloilo">Iloilo</option>
+                    <option value="Isabela">Isabela</option>
+                    <option value="La Union">La Union</option>
+                    <option value="Leyte">Leyte</option>
+                    <option value="Maguindanao">Maguindanao</option>
+                    <option value="Mountain Province">Mountain Province</option>
+                    <option value="Negros Occidental">Negros Occidental</option>
+                    <option value="North Cotabato">North Cotabato</option>
+                    <option value="Nueva Ecija">Nueva Ecija</option>
+                    <option value="Pampanga">Pampanga</option>
+                    <option value="Pangasinan">Pangasinan</option>
+                    <option value="South Cotabato">South Cotabato</option>
+                    <option value="Sultan Kudarat">Sultan Kudarat</option>
+                    <option value="Tarlac">Tarlac</option>
+                  </select>
+                  <!-- Hidden text input for custom location -->
+                  <input class="form-input" type="text" id="field-location-custom"
+                    placeholder="e.g. San Isidro, Nueva Ecija"
+                    style="display:none; margin-top:8px;"/>
+                  <!-- Hidden actual value field used by the rest of the app -->
+                  <input type="hidden" id="field-location" value=""/>
+                  <div class="field-error-msg" id="err-location">Please select or enter your location.</div>
+                </div>
+
+                <!-- Planting Date -->
+                <div class="form-group">
+                  <label class="form-label" for="field-planting-date">
+                    Planting Date
+                    <span class="optional-tag">(Optional)</span>
+                  </label>
+                  <input class="form-input" type="date" id="field-planting-date" onchange="validatePlantingDate(this)"/>
+                  <div class="field-error-msg" id="err-date">Invalid date — must be within the last 200 days and not in the future.</div>
+                </div>
+              </div>
+
+              <!-- Nav -->
+              <div class="step-nav">
+                <div class="step-nav-left">
+                  <button class="btn-step-reset" onclick="resetForm()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="23 4 23 10 17 10"/>
+                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                    Reset
+                  </button>
+                </div>
+                <div class="step-nav-right">
+                  <button class="btn-step-next" onclick="goToStep(2)">
+                    Next
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ STEP 2: Crop Details ══ -->
+          <div class="form-step" id="step-2">
+            <div class="step-card">
+              <div class="step-card-header">
+                <div class="step-card-eyebrow">Step 2 of 2</div>
+                <div class="step-card-title">Crop & Field Condition</div>
+                <div class="step-card-sub">Upload a photo of your field</div>
+              </div>
+
+              <div class="form-grid">
+
+                <!-- Photo Upload — full width, top of step 2 -->
+                <div class="form-group full">
+                  <label class="form-label">
+                    Field Photo — AI Analysis
+                    <span class="optional-tag">Optional · auto-fills fields below</span>
+                  </label>
+
+                  <div class="form-upload" id="upload-zone"
+                    onclick="document.getElementById('photo-input').click()"
+                    ondragover="handleDragOver(event)"
+                    ondrop="handleDrop(event)">
+                    <svg class="form-upload-icon" id="upload-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <rect x="3" y="8" width="30" height="22" rx="3"/>
+                      <circle cx="18" cy="19" r="6"/>
+                      <path d="M13 8l2-4h6l2 4"/>
+                    </svg>
+                    <div class="form-upload-text" id="upload-text">
+                      Click to upload or drag & drop<br/>
+                      JPG, PNG up to 10MB · AI will analyze field water status &amp; crop stage
+                    </div>
+                    <input type="file" id="photo-input" accept="image/*" style="display:none"
+                      onchange="handlePhotoUpload(this)"/>
+                  </div>
+
+                  <!-- Analysis strip -->
+                  <div class="analysis-strip" id="analysis-result">
+                    <!-- Loading state -->
+                    <div id="analysis-loading-state">
+                      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
+                        <div class="img-loader-orbit" id="img-loader-orbit">
+                          <div class="img-loader-ring"></div>
+                          <div class="img-loader-ring r2"></div>
+                          <div class="img-loader-core">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--yellow-bright)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                          </div>
+                        </div>
+                        <div>
+                          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--yellow-bright);margin-bottom:2px" id="img-loader-label">AI Analysis Running</div>
+                          <div style="font-size:12px;color:var(--text-light)" id="img-loader-sub">Reading image…</div>
+                        </div>
+                        <div style="margin-left:auto;font-size:18px;font-weight:700;font-family:'Playfair Display',serif;color:var(--text-dark)" id="img-loader-countdown">10</div>
+                      </div>
+                      <div style="display:flex;gap:6px;flex-wrap:wrap" id="img-loader-pills">
+                        <div class="img-pill active" id="imgpill-1">Scanning image</div>
+                        <div class="img-pill" id="imgpill-2">Water detection</div>
+                        <div class="img-pill" id="imgpill-3">Crop stage ID</div>
+                        <div class="img-pill" id="imgpill-4">Preparing results</div>
+                      </div>
+                      <div style="margin-top:10px;height:3px;background:var(--surface-1);border-radius:2px;overflow:hidden">
+                        <div id="img-loader-bar" style="height:100%;background:linear-gradient(90deg,var(--green-light),var(--yellow-bright));border-radius:2px;width:0%;transition:width linear"></div>
+                      </div>
+                    </div>
+                    <!-- Result state -->
+                    <div id="analysis-done-state" style="display:none">
+                      <div class="analysis-strip-header">
+                        <div class="analysis-dot" id="analysis-status-dot"></div>
+                        <span class="analysis-status-lbl" id="analysis-status-label">Analyzing…</span>
+                      </div>
+                      <div class="analysis-body" id="analysis-text"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="form-group full" style="display:flex;align-items:center;gap:12px;margin:-4px 0">
+                  <div style="flex:1;height:1px;background:var(--border)"></div>
+                  <span style="font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.08em">or fill in manually</span>
+                  <div style="flex:1;height:1px;background:var(--border)"></div>
+                </div>
+
+                <!-- Growth Stage -->
+                <div class="form-group">
+                  <label class="form-label" for="field-growth-stage">
+                    Crop Growth Stage
+                    <span style="color:#c03030;margin-left:2px">*</span>
+                  </label>
+                  <select class="form-select" id="field-growth-stage">
+                    <option value="">Select growth stage</option>
+                    <option value="seedling">Newly Planted</option>
+                    <option value="tillering">Vegetative</option>
+                    <option value="panicle">Flowering</option>
+                    <option value="heading">Near Harvest</option>
+                  </select>
+                  <div class="field-error-msg" id="err-stage">Please select a growth stage.</div>
+                </div>
+
+                <!-- Field Condition -->
+                <div class="form-group">
+                  <label class="form-label" for="field-condition">
+                    Current Field Condition
+                    <span style="color:#c03030;margin-left:2px">*</span>
+                  </label>
+                  <select class="form-select" id="field-condition">
+                    <option value="">Select condition</option>
+                    <option value="flooded">Flooded — standing water visible</option>
+                    <option value="saturated">Saturated — soil wet, no standing water</option>
+                    <option value="moist">Moist — soil slightly damp</option>
+                    <option value="dry">Dry — soil cracked or dry</option>
+                  </select>
+                  <div class="field-error-msg" id="err-condition">Please select a field condition.</div>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-group full">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+                    <label class="form-label" for="field-notes" style="margin-bottom:0">
+                      Additional Field Notes
+                      <span class="optional-tag">Optional</span>
+                    </label>
+                    <span id="notes-word-count" style="font-size:11px;color:var(--text-light);font-weight:500">0 / 200 words</span>
+                  </div>
+                  <textarea class="form-textarea" id="field-notes"
+                    placeholder="Describe crop appearance, or other observations…"
+                    oninput="updateWordCount(this)"></textarea>
+                  <div class="field-error-msg" id="err-notes">Notes exceed 200-word limit. Please shorten your entry.</div>
+                </div>
+              </div>
+
+              <!-- Nav -->
+              <div class="step-nav">
+                <div class="step-nav-left">
+                  <button class="btn-step-back" onclick="goToStep(1)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="19" y1="12" x2="5" y2="12"/>
+                      <polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                    Back
+                  </button>
+                </div>
+                <div class="step-nav-right">
+                  <button class="btn-step-next" onclick="generateAndAdvance()">
+                    Generate Advisory
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ STEP 3: Results ══ -->
+          <div class="form-step" id="step-3">
+            <div class="step-card" id="result-step-card">
+
+              <!-- Loading state -->
+              <div class="result-loading" id="result-loading" style="display:none">
+                <div class="agro-loader" id="advisory-loader">
+                  <div class="loader-orbit">
+                    <div class="loader-orbit-ring"></div>
+                    <div class="loader-orbit-ring ring2"></div>
+                    <div class="loader-orbit-core">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M12 2c-1.5 2-4 3-6 3 0 0 0 8 6 13M12 2c1.5 2 4 3 6 3 0 0 0 8-6 13"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="loader-body">
+                    <div class="loader-title">Generating Advisory</div>
+                    <div class="loader-subtitle" id="advisory-loader-sub">Connecting to weather data sources…</div>
+                  </div>
+                  <div class="loader-steps" id="advisory-loader-steps">
+                    <div class="loader-step" id="alstep-1">
+                      <div class="loader-step-icon">1</div>
+                      <span>Reading field conditions</span>
+                    </div>
+                    <div class="loader-step" id="alstep-2">
+                      <div class="loader-step-icon">2</div>
+                      <span>Fetching 3-day forecast data</span>
+                    </div>
+                    <div class="loader-step" id="alstep-3">
+                      <div class="loader-step-icon">3</div>
+                      <span>Applying IRRI AWD protocol</span>
+                    </div>
+                    <div class="loader-step" id="alstep-4">
+                      <div class="loader-step-icon">4</div>
+                      <span>Calculating risk scores</span>
+                    </div>
+                    <div class="loader-step" id="alstep-5">
+                      <div class="loader-step-icon">5</div>
+                      <span>Preparing recommendation</span>
+                    </div>
+                  </div>
+                  <div class="loader-timer">
+                    <div class="loader-timer-bar-track">
+                      <div class="loader-timer-bar-fill" id="advisory-loader-bar"></div>
+                    </div>
+                    <span id="advisory-loader-time">0s</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Result content (hidden until generated) -->
+              <div id="result-content" style="display:none">
+                <div class="result-header">
+                  <div>
+                    <div class="result-title">Irrigation Recommendation</div>
+                    <div class="result-meta-lbl" id="result-meta"></div>
+                  </div>
+                  <div class="decision-badge" id="result-badge">
+                    <span class="decision-badge-dot"></span>
+                    <span id="result-decision-text"></span>
+                  </div>
+                </div>
+
+                <!-- Summary chips of inputs -->
+                <div class="summary-chips" id="summary-chips"></div>
+
+                <div class="result-body" id="result-body"></div>
+
+                <div class="result-tagalog">
+                  <div class="result-tagalog-label">Filipino Advisory</div>
+                  <div id="result-tagalog-text"></div>
+                </div>
+
+                <!-- Risk Score Block -->
+                <div class="result-risk-block">
+                  <div class="result-risk-header">
+                    <div class="result-risk-label">Waterlogging Risk Score</div>
+                    <div style="text-align:right">
+                      <div class="result-risk-score" id="result-risk-score">—</div>
+                      <div class="result-risk-level" id="result-risk-level"></div>
+                    </div>
+                  </div>
+                  <div class="result-risk-meter">
+                    <div class="result-risk-fill" id="result-risk-fill" style="width:0%"></div>
+                  </div>
+                </div>
+
+                <!-- Weather Forecast Block -->
+                <div class="result-weather-block">
+                  <div class="result-weather-title">3-Day Rainfall Forecast</div>
+                  <div class="result-weather-strip" id="result-weather-strip"></div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="result-actions">
+                  <button class="btn-save" onclick="saveAdvisory()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                      <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                      <polyline points="17 21 17 13 7 13 7 21"/>
+                      <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Save Recommendation
+                  </button>
+                  <button class="btn-sms" onclick="showSMSModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                      <rect x="5" y="2" width="14" height="20" rx="2"/>
+                      <line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                    SMS Alert
+                  </button>
+                </div>
+
+                <!-- Start Over -->
+                <div class="step-nav" style="margin-top:16px; border-top: 1px solid rgba(111,168,50,0.1); padding-top: 16px;">
+                  <button class="btn-step-back" onclick="goToStep(2)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="19" y1="12" x2="5" y2="12"/>
+                      <polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                    Edit Inputs
+                  </button>
+                  <button class="btn-step-reset" onclick="resetForm()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="23 4 23 10 17 10"/>
+                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                    New Analysis
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /steps-track -->
+      </div><!-- /steps-viewport -->
+
+    </div>
+  </section>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <section id="dashboard">
+    <div class="section-inner">
+      <div class="section-label">Field Overview</div>
+      <h2 class="section-title">Your Farm Dashboard</h2>
+      <p class="section-desc">Real-time field status, risk scores, and weather outlook for your registered barangay location.</p>
+
+      <div class="dashboard-grid">
+
+        <!-- Decision card -->
+        <div class="dashboard-card accent">
+          <div class="card-label">Current Recommendation</div>
+          <div class="card-value">OK to Irrigate</div>
+          <div class="card-sub">Based on 3-day forecast · Updated 6:00 AM</div>
+          <div class="decision-badge ok">
+            <span class="decision-badge-dot"></span>
+            Low Flood Risk
+          </div>
+        </div>
+
+        <!-- Risk Score -->
+        <div class="dashboard-card">
+          <div class="card-label">Risk Score</div>
+          <div class="risk-score-display">
+            <div class="risk-circle">
+              <div class="risk-circle-inner">
+                <div class="risk-circle-num">38</div>
+                <div class="risk-circle-label">/ 100</div>
+              </div>
+            </div>
+            <div class="risk-sub-bars">
+              <div class="risk-bar-item">
+                <div class="risk-bar-header"><span>Flood Risk</span><span>28%</span></div>
+                <div class="risk-bar-track"><div class="risk-bar-fill flood" style="width:28%"></div></div>
+              </div>
+              <div class="risk-bar-item">
+                <div class="risk-bar-header"><span>Water Stress</span><span>45%</span></div>
+                <div class="risk-bar-track"><div class="risk-bar-fill stress" style="width:45%"></div></div>
+              </div>
+              <div class="risk-bar-item">
+                <div class="risk-bar-header"><span>Uncertainty</span><span>20%</span></div>
+                <div class="risk-bar-track"><div class="risk-bar-fill uncertainty" style="width:20%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card-sub">Confidence Level: <strong style="color:var(--yellow-bright)">High</strong></div>
+        </div>
+
+        <!-- Weather strip -->
+        <div class="dashboard-card full">
+          <div class="card-label">5-Day Weather Forecast · Barangay San Isidro, Nueva Ecija</div>
+          <div class="weather-strip">
+            <div class="weather-day today">
+              <div class="weather-day-name">Today</div>
+              <div class="weather-day-icon">
+                <svg class="weather-icon-svg" viewBox="0 0 28 28" fill="none">
+                  <circle cx="14" cy="14" r="6" fill="#EAC800"/>
+                  <path d="M14 3v3M14 22v3M3 14h3M22 14h3M6.2 6.2l2.1 2.1M19.7 19.7l2.1 2.1M6.2 21.8l2.1-2.1M19.7 8.3l2.1-2.1" stroke="#EAC800" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="weather-day-temp">32°</div>
+              <div class="weather-day-rain">0mm · 5%</div>
+            </div>
+            <div class="weather-day">
+              <div class="weather-day-name">Thu</div>
+              <div class="weather-day-icon">
+                <svg class="weather-icon-svg" viewBox="0 0 28 28" fill="none">
+                  <circle cx="11" cy="13" r="5" fill="#EAC800" opacity="0.8"/>
+                  <path d="M8 18h13a4 4 0 000-8h-1a5 5 0 00-9.9 1" fill="#b0c0d0" opacity="0.9"/>
+                </svg>
+              </div>
+              <div class="weather-day-temp">30°</div>
+              <div class="weather-day-rain">2mm · 25%</div>
+            </div>
+            <div class="weather-day">
+              <div class="weather-day-name">Fri</div>
+              <div class="weather-day-icon">
+                <svg class="weather-icon-svg" viewBox="0 0 28 28" fill="none">
+                  <path d="M6 16h16a5 5 0 000-10h-1a6 6 0 00-11.8 1.5" fill="#9aaab8" opacity="0.9"/>
+                  <path d="M9 20l1 3M14 20l1 3M19 20l1 3" stroke="#6090b8" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="weather-day-temp">27°</div>
+              <div class="weather-day-rain">18mm · 70%</div>
+            </div>
+            <div class="weather-day">
+              <div class="weather-day-name">Sat</div>
+              <div class="weather-day-icon">
+                <svg class="weather-icon-svg" viewBox="0 0 28 28" fill="none">
+                  <path d="M6 16h16a5 5 0 000-10h-1a6 6 0 00-11.8 1.5" fill="#9aaab8" opacity="0.9"/>
+                  <path d="M9 20l1 3M14 20l1 3M19 20l1 3" stroke="#6090b8" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="weather-day-temp">26°</div>
+              <div class="weather-day-rain">22mm · 80%</div>
+            </div>
+            <div class="weather-day">
+              <div class="weather-day-name">Sun</div>
+              <div class="weather-day-icon">
+                <svg class="weather-icon-svg" viewBox="0 0 28 28" fill="none">
+                  <circle cx="11" cy="13" r="5" fill="#EAC800" opacity="0.8"/>
+                  <path d="M8 18h13a4 4 0 000-8h-1a5 5 0 00-9.9 1" fill="#b0c0d0" opacity="0.9"/>
+                </svg>
+              </div>
+              <div class="weather-day-temp">29°</div>
+              <div class="weather-day-rain">5mm · 30%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Recommendation -->
+        <div class="dashboard-card full" id="ai-rec-card" style="display:none;">
+          <div class="card-label" id="ai-rec-label">AI Recommendation</div>
+          <div class="ai-rec-body">
+            <div class="ai-rec-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a7 7 0 0 1 7 7c0 3.5-2.5 6.4-5.8 7.7L12 22l-1.2-5.3C7.5 15.4 5 12.5 5 9a7 7 0 0 1 7-7z"/>
+                <circle cx="12" cy="9" r="2.5" fill="currentColor" stroke="none" opacity="0.6"/>
+              </svg>
+            </div>
+            <div class="ai-rec-text-wrap">
+              <div class="ai-rec-en" id="ai-rec-en">—</div>
+              <div class="ai-rec-tl-wrap">
+                <div class="ai-rec-tl-label">Filipino Advisory</div>
+                <div class="ai-rec-tl" id="ai-rec-tl">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="ai-rec-meta" id="ai-rec-meta"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">Agro<span>Sense</span></div>
+      <div class="footer-tagline">Minimizing Crop Loss, Water Wastage, while Maximizing Crop Growth and Profit</div>
+      <ul class="footer-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Methodology</a></li>
+        <li><a href="#">IRRI AWD</a></li>
+        <li><a href="#">PhilRice Guidelines</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <div class="footer-credit">
+        Built by <strong>Celindro · Magday · Navarrosa · Novela</strong><br/>
+        ACSS Innovation Lab · Philippines
+      </div>
+    </div>
+  </footer>
+
+</div><!-- /#app -->
+
+<!-- ═══ TOAST ═══ -->
+<div id="agro-toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="agro-toast-msg"></span>
+</div>
+
+<!-- ═══ SMS MODAL ═══ -->
+<div id="sms-modal">
+  <div class="sms-modal-card">
+    <div class="sms-modal-title">SMS Alert Subscription</div>
+    <div class="sms-modal-sub">Receive daily irrigation advisories and weather alerts via SMS — no app needed.</div>
+    <input class="sms-modal-input" type="tel" id="sms-phone-input" placeholder="0917-XXX-XXXX" maxlength="13"/>
+    <div class="sms-modal-actions">
+      <button class="btn-sub" onclick="subscribeSMS()">Subscribe</button>
+      <button class="btn-cancel" onclick="closeSMSModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
